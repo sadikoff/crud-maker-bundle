@@ -1,0 +1,15 @@
+preset: symfony
+
+linting: true
+
+enabled:
+  - ordered_use
+  - strict
+  - strict_param
+  - short_array_syntax
+  - php_unit_construct
+  - phpdoc_order
+
+finder:
+  exclude:
+    - "tests"
