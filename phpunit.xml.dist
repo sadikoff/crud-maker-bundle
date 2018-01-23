@@ -20,6 +20,9 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src/</directory>
+            <exclude>
+                <directory>src/Resources</directory>
+            </exclude>
         </whitelist>
     </filter>
 

@@ -20,7 +20,8 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.8",
-        "symfony/phpunit-bridge": "^3.4|^4.0"
+        "symfony/phpunit-bridge": "^3.4|^4.0",
+        "doctrine/orm": "^2.5.11"
     },
     "config": {
         "preferred-install": {

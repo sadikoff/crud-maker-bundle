@@ -26,9 +26,7 @@ class <?= $controller_class_name ?> extends Controller
             ->getRepository(<?= $entity_class_name ?>::class)
             ->findAll();
 
-        return $this->render('<?= $route_name ?>/index.html.twig', [
-            '<?= $entity_var_plural ?>' => $<?= $entity_var_plural ?>
-        ]);
+        return $this->render('<?= $route_name ?>/index.html.twig', ['<?= $entity_var_plural ?>' => $<?= $entity_var_plural ?>]);
     }
 
     /**
