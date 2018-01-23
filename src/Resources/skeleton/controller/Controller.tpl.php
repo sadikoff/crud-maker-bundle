@@ -43,7 +43,7 @@ class <?= $controller_class_name ?> extends Controller
 
         return $this->render('<?= $route_name ?>/show.html.twig', [
             '<?= $entity_var_singular ?>' => $<?= $entity_var_singular ?>,
-            'delete_form' => $deleteForm->createView()
+            'delete_form' => $deleteForm->createView(),
         ]);
     }
 
@@ -71,7 +71,7 @@ class <?= $controller_class_name ?> extends Controller
 
         return $this->render('<?= $route_name ?>/new.html.twig', [
             '<?= $entity_var_singular ?>' => $<?= $entity_var_singular ?>,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
@@ -100,7 +100,7 @@ class <?= $controller_class_name ?> extends Controller
         return $this->render('<?= $route_name ?>/edit.html.twig', [
             '<?= $entity_var_singular ?>' => $<?= $entity_var_singular ?>,
             'form' => $form->createView(),
-            'delete_form' => $deleteForm->createView()
+            'delete_form' => $deleteForm->createView(),
         ]);
     }
 
@@ -137,7 +137,7 @@ class <?= $controller_class_name ?> extends Controller
     private function createDeleteForm(<?= $entity_class_name ?> $<?= $entity_var_singular ?>)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('<?= $route_name ?>_delete', array('<?= $entity_identifier ?>' => $<?= $entity_var_singular ?>->get<?= ucfirst($entity_identifier) ?>())))
+            ->setAction($this->generateUrl('<?= $route_name ?>_delete', ['<?= $entity_identifier ?>' => $<?= $entity_var_singular ?>->get<?= ucfirst($entity_identifier) ?>()]))
             ->setMethod('DELETE')
             ->getForm()
         ;
