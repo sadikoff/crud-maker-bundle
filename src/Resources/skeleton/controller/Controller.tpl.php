@@ -80,7 +80,7 @@ class <?= $controller_class_name ?> extends Controller
      * @Method({"GET", "POST"})
      *
      * @param Request $request
-     * @param <?= $entity_class_name ?> $<?= $entity_var_singular ?> The <?= $entity_class_name ?> entity
+     * @param <?= $entity_class_name ?>  $<?= $entity_var_singular ?>  The <?= $entity_class_name ?> entity
      *
      * @return Response
      */
@@ -109,7 +109,7 @@ class <?= $controller_class_name ?> extends Controller
      * @Method("DELETE")
      *
      * @param Request $request
-     * @param <?= $entity_class_name ?> $<?= $entity_var_singular ?> The <?= $entity_class_name ?> entity
+     * @param <?= $entity_class_name ?>  $<?= $entity_var_singular ?>  The <?= $entity_class_name ?> entity
      *
      * @return Response
      */
