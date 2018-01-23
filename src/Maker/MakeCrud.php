@@ -24,6 +24,7 @@ use Symfony\Component\Routing\RouterInterface;
 final class MakeCrud implements MakerInterface
 {
     private $router;
+
     private $entityManager;
 
     public function __construct(RouterInterface $router, EntityManagerInterface $entityManager)
