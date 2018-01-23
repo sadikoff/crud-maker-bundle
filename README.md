@@ -10,9 +10,12 @@ koff/crud-maker-bundle
 [![StyleCI](https://styleci.io/repos/118423208/shield?branch=master)](https://styleci.io/repos/118423208)
 [![Coverage Status](https://coveralls.io/repos/github/sadikoff/crud-maker-bundle/badge.svg?branch=master)](https://coveralls.io/github/sadikoff/crud-maker-bundle?branch=master)
 
+This bundle is extension to `symfony/maker-bundle`. It allows you to create simple crud with just one command.
+
 Requirements
 ------------
 * Symfony flex with Symfony 3.4|4.0
+* symfony/maker-bundle
 
 Installation
 ------------
@@ -22,11 +25,19 @@ Installation
 Configuration
 -------------
 
+No additional configuration needed
+
 Usage
 -----
 
-Additional
-----------
+    bin\console make:crud <Entity name>
+
+or with iteraction
+
+    bin\console make:crud
+
+
+> Entity must exist before command use
 
 License
 =======

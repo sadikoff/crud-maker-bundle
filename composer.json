@@ -3,6 +3,7 @@
     "type": "symfony-bundle",
     "license": "MIT",
     "keywords": ["generator", "code generator", "scaffolding", "scaffold", "crud generator"],
+    "description": "This bundle is extension to `symfony/maker-bundle`. It allows you to create simple crud with just one command.",
     "authors": [
         {
             "name": "Sadicov Vladimir",

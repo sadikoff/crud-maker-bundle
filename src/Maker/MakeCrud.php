@@ -2,6 +2,9 @@
 
 namespace Koff\Bundle\CrudMakerBundle\Maker;
 
+use Doctrine\Common\Inflector\Inflector;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -21,10 +24,12 @@ use Symfony\Component\Routing\RouterInterface;
 final class MakeCrud implements MakerInterface
 {
     private $router;
+    private $entityManager;
 
-    public function __construct(RouterInterface $router)
+    public function __construct(RouterInterface $router, EntityManagerInterface $entityManager)
     {
         $this->router = $router;
+        $this->entityManager = $entityManager;
     }
 
     public static function getCommandName(): string
@@ -58,6 +63,11 @@ final class MakeCrud implements MakerInterface
             TwigBundle::class,
             'twig-bundle'
         );
+
+        $dependencies->addClassDependency(
+            EntityManager::class,
+            'orm-pack'
+        );
     }
 
     /**
@@ -79,9 +89,15 @@ final class MakeCrud implements MakerInterface
         $formClassName = Str::asClassName($entityClassName, 'Type');
         Validator::validateClassName($formClassName);
 
+        $metadata = $this->entityManager->getClassMetadata('App\\Entity\\'.$entityClassName);
+
         return [
             'controller_class_name' => $controllerClassName,
+            'entity_var_plural' => lcfirst(Inflector::pluralize($entityClassName)),
+            'entity_var_singular' => lcfirst(Inflector::singularize($entityClassName)),
             'entity_class_name' => $entityClassName,
+            'entity_identifier' => $metadata->identifier[0],
+            'entity_fields' => $metadata->fieldMappings,
             'form_class_name' => $formClassName,
             'route_path' => Str::asRoutePath(str_replace('Controller', '', $controllerClassName)),
             'route_name' => Str::asRouteName(str_replace('Controller', '', $controllerClassName)),
@@ -96,6 +112,10 @@ final class MakeCrud implements MakerInterface
         return [
             __DIR__.'/../Resources/skeleton/controller/Controller.tpl.php' => 'src/Controller/'.$params['controller_class_name'].'.php',
             __DIR__.'/../Resources/skeleton/form/Type.tpl.php' => 'src/Form/'.$params['form_class_name'].'.php',
+            __DIR__.'/../Resources/skeleton/templates/index.tpl.php' => 'templates/'.$params['route_name'].'/index.html.twig',
+            __DIR__.'/../Resources/skeleton/templates/show.tpl.php' => 'templates/'.$params['route_name'].'/show.html.twig',
+            __DIR__.'/../Resources/skeleton/templates/new.tpl.php' => 'templates/'.$params['route_name'].'/new.html.twig',
+            __DIR__.'/../Resources/skeleton/templates/edit.tpl.php' => 'templates/'.$params['route_name'].'/edit.html.twig',
         ];
     }
 
@@ -109,6 +129,6 @@ final class MakeCrud implements MakerInterface
             $io->text('           You should probably uncomment the annotation routes in <comment>config/routes.yaml</>');
             $io->newLine();
         }
-        $io->text('Next: Check your new crud class!');
+        $io->text('Next: Check your new crud!');
     }
 }
