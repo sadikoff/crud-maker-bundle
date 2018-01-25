@@ -30,24 +30,6 @@ class <?= $controller_class_name ?> extends Controller
     }
 
     /**
-     * @Route("/{<?= $entity_identifier ?>}", name="show")
-     * @Method("GET")
-     *
-     * @param <?= $entity_class_name ?> $<?= $entity_var_singular ?> The <?= $entity_class_name ?> entity
-     *
-     * @return Response
-     */
-    public function show(<?= $entity_class_name ?> $<?= $entity_var_singular ?>)
-    {
-        $deleteForm = $this->createDeleteForm($<?= $entity_var_singular ?>);
-
-        return $this->render('<?= $route_name ?>/show.html.twig', [
-            '<?= $entity_var_singular ?>' => $<?= $entity_var_singular ?>,
-            'delete_form' => $deleteForm->createView(),
-        ]);
-    }
-
-    /**
      * @Route("/new", name="new")
      * @Method({"GET", "POST"})
      *
@@ -72,6 +54,25 @@ class <?= $controller_class_name ?> extends Controller
         return $this->render('<?= $route_name ?>/new.html.twig', [
             '<?= $entity_var_singular ?>' => $<?= $entity_var_singular ?>,
             'form' => $form->createView(),
+        ]);
+    }
+
+
+    /**
+     * @Route("/{<?= $entity_identifier ?>}", name="show")
+     * @Method("GET")
+     *
+     * @param <?= $entity_class_name ?> $<?= $entity_var_singular ?> The <?= $entity_class_name ?> entity
+     *
+     * @return Response
+     */
+    public function show(<?= $entity_class_name ?> $<?= $entity_var_singular ?>)
+    {
+        $deleteForm = $this->createDeleteForm($<?= $entity_var_singular ?>);
+
+        return $this->render('<?= $route_name ?>/show.html.twig', [
+            '<?= $entity_var_singular ?>' => $<?= $entity_var_singular ?>,
+            'delete_form' => $deleteForm->createView(),
         ]);
     }
 
