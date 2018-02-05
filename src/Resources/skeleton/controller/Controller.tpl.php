@@ -31,13 +31,13 @@ class <?= $controller_class_name ?> extends Controller
 
 
     /**
-    * @Route("/new", name="new")
-    * @Method({"GET", "POST"})
-    *
-    * @param Request $request
-    *
-    * @return Response
-    */
+     * @Route("/new", name="new")
+     * @Method({"GET", "POST"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
     public function new(Request $request)
     {
         $<?= $entity_var_singular ?> = new <?= $entity_class_name ?>();
