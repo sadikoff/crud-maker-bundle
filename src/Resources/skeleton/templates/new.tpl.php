@@ -1,9 +1,9 @@
-{% extends 'base.html.twig' %}
+<?= $helper->getHead($base_layout_exists, 'New '.$entity_class_name); ?>
 
-{% block body %}
-    <h1>Create new <?= $entity_class_name ?></h1>
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <input type="submit" value="Save">
-    {{ form_end(form) }}
-{% endblock %}
+<?= $helper->getBodyStart($base_layout_exists); ?>
+
+    <h1>Create new <?= $entity_class_name; ?></h1>
+
+    {% include '<?= $route_name; ?>/_form.html.twig' with {'form': form} only %}
+
+<?= $helper->getBodyEnd($base_layout_exists); ?>

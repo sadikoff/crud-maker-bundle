@@ -5,6 +5,7 @@ namespace Koff\Bundle\CrudMakerBundle\Maker;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Koff\Bundle\CrudMakerBundle\GeneratorHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -92,7 +93,10 @@ final class MakeCrud implements MakerInterface
 
         $metadata = $this->entityManager->getClassMetadata('App\\Entity\\'.$entityClassName);
 
+        $helper = new GeneratorHelper();
+
         return [
+            'helper' => $helper,
             'controller_class_name' => $controllerClassName,
             'entity_var_plural' => lcfirst(Inflector::pluralize($entityClassName)),
             'entity_var_singular' => lcfirst(Inflector::singularize($entityClassName)),
@@ -100,6 +104,8 @@ final class MakeCrud implements MakerInterface
             'entity_identifier' => $metadata->identifier[0],
             'entity_fields' => $metadata->fieldMappings,
             'form_class_name' => $formClassName,
+            // temporary hardcoded var for helper and generator
+            'base_layout_exists' => true,
             'route_path' => Str::asRoutePath(str_replace('Controller', '', $controllerClassName)),
             'route_name' => Str::asRouteName(str_replace('Controller', '', $controllerClassName)),
         ];

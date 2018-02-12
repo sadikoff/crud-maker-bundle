@@ -1,28 +1,21 @@
-{% extends 'base.html.twig' %}
+<?= $helper->getHead($base_layout_exists, $entity_class_name); ?>
 
-{% block body %}
-    <h1><?= $entity_class_name ?></h1>
+<?= $helper->getBodyStart($base_layout_exists); ?>
 
-    <table>
-    <?php foreach ($entity_fields as $field): ?>
+    <h1><?= $entity_class_name; ?></h1>
+
+    <table><?php foreach ($entity_fields as $field): ?>
+
         <tr>
-            <th><?= ucfirst($field['fieldName']) ?></th>
-            <td>{{ <?= $entity_var_singular ?>.<?= $field['fieldName'] ?> }}</td>
+            <th><?= ucfirst($field['fieldName']); ?></th>
+            <td>{{ <?= $helper->getEntityFieldPrintCode($entity_var_singular, $field); ?> }}</td>
         </tr>
-    <?php endforeach; ?>
-    </table>
+    <?php endforeach; ?></table>
 
-    <ul>
-        <li>
-            <a href="{{ path('<?= $route_name ?>_index') }}">back to list</a>
-        </li>
-        <li>
-            <a href="{{ path('<?= $route_name ?>_edit', {'<?= $entity_identifier ?>':<?= $entity_var_singular ?>.<?= $entity_identifier ?>}) }}">edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-            <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
-{% endblock %}
+    <a href="{{ path('<?= $route_name; ?>_index') }}">back to list</a>
+
+    <a href="{{ path('<?= $route_name; ?>_edit', {'<?= $entity_identifier; ?>':<?= $entity_var_singular; ?>.<?= $entity_identifier; ?>}) }}">edit</a>
+
+    {% include '<?= $route_name; ?>/_delete_form.html.twig' with {'identifier': <?= $entity_var_singular; ?>.<?= $entity_identifier; ?>} only %}
+
+<?= $helper->getBodyEnd($base_layout_exists); ?>

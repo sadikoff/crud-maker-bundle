@@ -38,7 +38,7 @@ class FunctionalTest extends TestCase
 
     public function tearDown()
     {
-        //$this->fs->remove($this->targetDir);
+        $this->fs->remove($this->targetDir);
     }
 
     /**
@@ -74,7 +74,7 @@ class FunctionalTest extends TestCase
 
         $metadata = $this->createMock(ClassMetadataInfo::class);
         $metadata->identifier = ['id'];
-        $metadata->fieldMappings = [['fieldName' => 'id'], ['fieldName' => 'title']];
+        $metadata->fieldMappings = [['fieldName' => 'id', 'type' => 'integer'], ['fieldName' => 'title', 'type' => 'string']];
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects($this->once())
