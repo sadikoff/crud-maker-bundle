@@ -123,6 +123,8 @@ final class MakeCrud implements MakerInterface
             __DIR__.'/../Resources/skeleton/templates/show.tpl.php' => 'templates/'.$params['route_name'].'/show.html.twig',
             __DIR__.'/../Resources/skeleton/templates/new.tpl.php' => 'templates/'.$params['route_name'].'/new.html.twig',
             __DIR__.'/../Resources/skeleton/templates/edit.tpl.php' => 'templates/'.$params['route_name'].'/edit.html.twig',
+            __DIR__.'/../Resources/skeleton/templates/_form.tpl.php' => 'templates/'.$params['route_name'].'/_form.html.twig',
+            __DIR__.'/../Resources/skeleton/templates/_delete_form.tpl.php' => 'templates/'.$params['route_name'].'/_delete_form.html.twig',
         ];
     }
 
