@@ -2,10 +2,10 @@
 
 namespace Koff\Bundle\CrudMakerBundle\Maker;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Common\Inflector\Inflector;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\EntityManagerInterface;
-use Koff\Bundle\CrudMakerBundle\GeneratorHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -17,7 +17,10 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Validator\Validation;
+use Koff\Bundle\CrudMakerBundle\GeneratorHelper;
 
 /**
  * @author Sadicov Vladimir <sadikoff@gmail.com>
@@ -62,13 +65,33 @@ final class MakeCrud implements MakerInterface
         );
 
         $dependencies->addClassDependency(
+            AbstractType::class,
+            'form'
+        );
+
+        $dependencies->addClassDependency(
+            Validation::class,
+            'validator'
+        );
+
+        $dependencies->addClassDependency(
             TwigBundle::class,
             'twig-bundle'
         );
 
         $dependencies->addClassDependency(
-            EntityManager::class,
-            'orm-pack'
+            DoctrineBundle::class,
+            'orm'
+        );
+
+        $dependencies->addClassDependency(
+            Column::class,
+            'orm'
+        );
+
+        $dependencies->addClassDependency(
+            CsrfTokenManager::class,
+            'security-csrf'
         );
     }
 
