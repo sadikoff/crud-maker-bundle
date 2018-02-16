@@ -21,6 +21,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Validation;
 use Koff\Bundle\CrudMakerBundle\GeneratorHelper;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
 
 /**
  * @author Sadicov Vladimir <sadikoff@gmail.com>
