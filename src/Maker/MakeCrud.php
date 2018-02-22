@@ -4,8 +4,9 @@ namespace Koff\Bundle\CrudMakerBundle\Maker;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Common\Inflector\Inflector;
-use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Column;
+use Koff\Bundle\CrudMakerBundle\GeneratorHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -19,9 +20,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Validator\Validation;
-use Koff\Bundle\CrudMakerBundle\GeneratorHelper;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
+use Symfony\Component\Validator\Validation;
 
 /**
  * @author Sadicov Vladimir <sadikoff@gmail.com>
