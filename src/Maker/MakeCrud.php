@@ -119,7 +119,7 @@ final class MakeCrud extends AbstractMaker
 
         $generator->generateClass(
             $controllerClassNameDetails->getFullName(),
-            'crud/controller/Controller.tpl.php',
+            'controller/Controller.tpl.php',
             [
                 'entity_full_class_name' => $entityClassNameDetails->getFullName(),
                 'entity_class_name' => $entityClassNameDetails->getShortName(),
@@ -137,7 +137,7 @@ final class MakeCrud extends AbstractMaker
 
         $generator->generateClass(
             $formClassNameDetails->getFullName(),
-            'form/crud/Type.tpl.php',
+            'form/Type.tpl.php',
             [
                 'entity_class_exists' => true,
                 'entity_full_class_name' => $entityClassNameDetails->getFullName(),
@@ -194,7 +194,7 @@ final class MakeCrud extends AbstractMaker
         foreach ($templates as $template => $variables) {
             $generator->generateFile(
                 'templates/'.$templatesPath.'/'.$template.'.html.twig',
-                'crud/templates/'.$template.'.tpl.php',
+                'templates/'.$template.'.tpl.php',
                 $variables
             );
         }
