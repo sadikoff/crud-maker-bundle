@@ -14,7 +14,6 @@ use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
 use Symfony\Bundle\MakerBundle\Str;
-use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -117,9 +116,11 @@ final class MakeCrud extends AbstractMaker
         $entityVarSingular = lcfirst(Inflector::singularize($entityClassNameDetails->getShortName()));
         $routeName = Str::asRouteName($controllerClassNameDetails->getRelativeNameWithoutSuffix());
 
+        $path = __DIR__.'/../Resources/skeleton/';
+
         $generator->generateClass(
             $controllerClassNameDetails->getFullName(),
-            'controller/Controller.tpl.php',
+            $path.'controller/Controller.tpl.php',
             [
                 'entity_full_class_name' => $entityClassNameDetails->getFullName(),
                 'entity_class_name' => $entityClassNameDetails->getShortName(),
@@ -137,7 +138,7 @@ final class MakeCrud extends AbstractMaker
 
         $generator->generateClass(
             $formClassNameDetails->getFullName(),
-            'form/Type.tpl.php',
+            $path.'form/Type.tpl.php',
             [
                 'entity_class_exists' => true,
                 'entity_full_class_name' => $entityClassNameDetails->getFullName(),
@@ -194,7 +195,7 @@ final class MakeCrud extends AbstractMaker
         foreach ($templates as $template => $variables) {
             $generator->generateFile(
                 'templates/'.$templatesPath.'/'.$template.'.html.twig',
-                'templates/'.$template.'.tpl.php',
+                $path.'templates/'.$template.'.tpl.php',
                 $variables
             );
         }
