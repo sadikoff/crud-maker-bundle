@@ -144,6 +144,7 @@ final class MakeCrud extends AbstractMaker
                 'entity_full_class_name' => $entityClassNameDetails->getFullName(),
                 'entity_class_name' => $entityClassNameDetails->getShortName(),
                 'entity_fields' => $metadata->fieldMappings,
+                'entity_identifier' => $metadata->identifier[0],
                 'helper' => $helper,
             ]
         );
