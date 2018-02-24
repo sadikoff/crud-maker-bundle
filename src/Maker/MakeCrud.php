@@ -10,8 +10,9 @@ use Koff\Bundle\CrudMakerBundle\GeneratorHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
+use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
-use Symfony\Bundle\MakerBundle\MakerInterface;
+use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Bundle\TwigBundle\TwigBundle;
@@ -19,22 +20,18 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Validator\Validation;
 
 /**
  * @author Sadicov Vladimir <sadikoff@gmail.com>
  */
-final class MakeCrud implements MakerInterface
+final class MakeCrud extends AbstractMaker
 {
-    private $router;
-
     private $entityManager;
 
-    public function __construct(RouterInterface $router, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->router = $router;
         $this->entityManager = $entityManager;
     }
 
@@ -96,72 +93,116 @@ final class MakeCrud implements MakerInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function interact(InputInterface $input, ConsoleStyle $io, Command $command)
+    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator)
     {
-    }
+        $entityClassNameDetails = $generator->createClassNameDetails(
+            $input->getArgument('entity-class'),
+            'Entity\\'
+        );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameters(InputInterface $input): array
-    {
-        $entityClassName = Str::asClassName($input->getArgument('entity-class'));
-        Validator::validateClassName($entityClassName);
-        $controllerClassName = Str::asClassName($entityClassName, 'Controller');
-        Validator::validateClassName($controllerClassName);
-        $formClassName = Str::asClassName($entityClassName, 'Type');
-        Validator::validateClassName($formClassName);
+        $controllerClassNameDetails = $generator->createClassNameDetails(
+            $entityClassNameDetails->getRelativeNameWithoutSuffix(),
+            'Controller\\',
+            'Controller'
+        );
 
-        $metadata = $this->entityManager->getClassMetadata('App\\Entity\\'.$entityClassName);
+        $formClassNameDetails = $generator->createClassNameDetails(
+            $entityClassNameDetails->getRelativeNameWithoutSuffix(),
+            'Form\\',
+            'Type'
+        );
+
+        $metadata = $this->entityManager->getClassMetadata($entityClassNameDetails->getFullName());
+        $entityVarPlural = lcfirst(Inflector::pluralize($entityClassNameDetails->getShortName()));
+        $entityVarSingular = lcfirst(Inflector::singularize($entityClassNameDetails->getShortName()));
+        $routeName = Str::asRouteName($controllerClassNameDetails->getRelativeNameWithoutSuffix());
+
+        $generator->generateClass(
+            $controllerClassNameDetails->getFullName(),
+            'crud/controller/Controller.tpl.php',
+            [
+                'entity_full_class_name' => $entityClassNameDetails->getFullName(),
+                'entity_class_name' => $entityClassNameDetails->getShortName(),
+                'form_full_class_name' => $formClassNameDetails->getFullName(),
+                'form_class_name' => $formClassNameDetails->getShortName(),
+                'route_path' => Str::asRoutePath($controllerClassNameDetails->getRelativeNameWithoutSuffix()),
+                'route_name' => $routeName,
+                'entity_var_plural' => $entityVarPlural,
+                'entity_var_singular' => $entityVarSingular,
+                'entity_identifier' => $metadata->identifier[0],
+            ]
+        );
 
         $helper = new GeneratorHelper();
 
-        return [
-            'helper' => $helper,
-            'controller_class_name' => $controllerClassName,
-            'entity_var_plural' => lcfirst(Inflector::pluralize($entityClassName)),
-            'entity_var_singular' => lcfirst(Inflector::singularize($entityClassName)),
-            'entity_class_name' => $entityClassName,
-            'entity_identifier' => $metadata->identifier[0],
-            'entity_fields' => $metadata->fieldMappings,
-            'form_class_name' => $formClassName,
-            // temporary hardcoded var for helper and generator
-            'base_layout_exists' => true,
-            'route_path' => Str::asRoutePath(str_replace('Controller', '', $controllerClassName)),
-            'route_name' => Str::asRouteName(str_replace('Controller', '', $controllerClassName)),
-        ];
-    }
+        $generator->generateClass(
+            $formClassNameDetails->getFullName(),
+            'form/crud/Type.tpl.php',
+            [
+                'entity_class_exists' => true,
+                'entity_full_class_name' => $entityClassNameDetails->getFullName(),
+                'entity_class_name' => $entityClassNameDetails->getShortName(),
+                'entity_fields' => $metadata->fieldMappings,
+                'helper' => $helper,
+            ]
+        );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFiles(array $params): array
-    {
-        return [
-            __DIR__.'/../Resources/skeleton/controller/Controller.tpl.php' => 'src/Controller/'.$params['controller_class_name'].'.php',
-            __DIR__.'/../Resources/skeleton/form/Type.tpl.php' => 'src/Form/'.$params['form_class_name'].'.php',
-            __DIR__.'/../Resources/skeleton/templates/index.tpl.php' => 'templates/'.$params['route_name'].'/index.html.twig',
-            __DIR__.'/../Resources/skeleton/templates/show.tpl.php' => 'templates/'.$params['route_name'].'/show.html.twig',
-            __DIR__.'/../Resources/skeleton/templates/new.tpl.php' => 'templates/'.$params['route_name'].'/new.html.twig',
-            __DIR__.'/../Resources/skeleton/templates/edit.tpl.php' => 'templates/'.$params['route_name'].'/edit.html.twig',
-            __DIR__.'/../Resources/skeleton/templates/_form.tpl.php' => 'templates/'.$params['route_name'].'/_form.html.twig',
-            __DIR__.'/../Resources/skeleton/templates/_delete_form.tpl.php' => 'templates/'.$params['route_name'].'/_delete_form.html.twig',
-        ];
-    }
+        $baseLayoutExists = true;
+        $templatesPath = Str::asFilePath($controllerClassNameDetails->getRelativeNameWithoutSuffix());
 
-    /**
-     * {@inheritdoc}
-     */
-    public function writeNextStepsMessage(array $params, ConsoleStyle $io)
-    {
-        if (!count($this->router->getRouteCollection())) {
-            $io->text('<error> Warning! </> No routes configuration defined yet.');
-            $io->text('           You should probably uncomment the annotation routes in <comment>config/routes.yaml</>');
-            $io->newLine();
+        $templates = [
+            '_delete_form' => [
+                'route_name' => $routeName,
+                'entity_identifier' => $metadata->identifier[0],
+            ],
+            '_form' => [],
+            'edit' => [
+                'helper' => $helper,
+                'base_layout_exists' => $baseLayoutExists,
+                'entity_class_name' => $entityClassNameDetails->getShortName(),
+                'entity_var_singular' => $entityVarSingular,
+                'entity_identifier' => $metadata->identifier[0],
+                'route_name' => $routeName,
+            ],
+            'index' => [
+                'helper' => $helper,
+                'base_layout_exists' => $baseLayoutExists,
+                'entity_class_name' => $entityClassNameDetails->getShortName(),
+                'entity_var_plural' => $entityVarPlural,
+                'entity_var_singular' => $entityVarSingular,
+                'entity_identifier' => $metadata->identifier[0],
+                'entity_fields' => $metadata->fieldMappings,
+                'route_name' => $routeName,
+            ],
+            'new' => [
+                'helper' => $helper,
+                'base_layout_exists' => $baseLayoutExists,
+                'entity_class_name' => $entityClassNameDetails->getShortName(),
+                'route_name' => $routeName,
+            ],
+            'show' => [
+                'helper' => $helper,
+                'base_layout_exists' => $baseLayoutExists,
+                'entity_class_name' => $entityClassNameDetails->getShortName(),
+                'entity_var_singular' => $entityVarSingular,
+                'entity_identifier' => $metadata->identifier[0],
+                'entity_fields' => $metadata->fieldMappings,
+                'route_name' => $routeName,
+            ],
+        ];
+
+        foreach ($templates as $template => $variables) {
+            $generator->generateFile(
+                'templates/'.$templatesPath.'/'.$template.'.html.twig',
+                'crud/templates/'.$template.'.tpl.php',
+                $variables
+            );
         }
+
+        $generator->writeChanges();
+
+        $this->writeSuccessMessage($io);
+
         $io->text('Next: Check your new crud!');
     }
 }

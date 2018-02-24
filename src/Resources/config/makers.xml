@@ -8,7 +8,6 @@
         <defaults public="false" />
 
         <service id="maker.maker.crud" class="Koff\Bundle\CrudMakerBundle\Maker\MakeCrud">
-            <argument type="service" id="router" />
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <tag name="maker.command" />
         </service>
