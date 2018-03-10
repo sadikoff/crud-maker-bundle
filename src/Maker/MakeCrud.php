@@ -5,6 +5,7 @@ namespace Koff\Bundle\CrudMakerBundle\Maker;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Mapping\Column;
 use Koff\Bundle\CrudMakerBundle\GeneratorHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -45,8 +46,8 @@ final class MakeCrud extends AbstractMaker
     public function configureCommand(Command $command, InputConfiguration $inputConfig)
     {
         $command
-            ->setDescription('Creates crud for Doctrine entity class')
-            ->addArgument('entity-class', InputArgument::OPTIONAL, sprintf('The class name of the entity to create crud (e.g. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
+            ->setDescription('Creates CRUD for Doctrine entity class')
+            ->addArgument('entity-class', InputArgument::OPTIONAL, sprintf('The class name of the entity to create CRUD (e.g. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
             ->setHelp(file_get_contents(__DIR__.'/../Resources/help/MakeCrud.txt'))
         ;
     }
@@ -143,9 +144,7 @@ final class MakeCrud extends AbstractMaker
                 'entity_class_exists' => true,
                 'entity_full_class_name' => $entityClassNameDetails->getFullName(),
                 'entity_class_name' => $entityClassNameDetails->getShortName(),
-                'entity_fields' => $metadata->fieldMappings,
-                'entity_identifier' => $metadata->identifier[0],
-                'helper' => $helper,
+                'form_fields' => $this->getFormFieldsFromEntity($metadata),
             ]
         );
 
@@ -205,6 +204,22 @@ final class MakeCrud extends AbstractMaker
 
         $this->writeSuccessMessage($io);
 
-        $io->text('Next: Check your new crud!');
+        $io->text('Next: Check your new CRUD!');
+    }
+
+    private function getFormFieldsFromEntity(ClassMetadataInfo $metadata): array
+    {
+        $fields = (array) $metadata->fieldNames;
+        // Remove the primary key field if it's not managed manually
+        if (!$metadata->isIdentifierNatural()) {
+            $fields = array_diff($fields, $metadata->identifier);
+        }
+        foreach ($metadata->associationMappings as $fieldName => $relation) {
+            if (ClassMetadataInfo::ONE_TO_MANY !== $relation['type']) {
+                $fields[] = $fieldName;
+            }
+        }
+
+        return $fields;
     }
 }
