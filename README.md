@@ -1,3 +1,6 @@
+
+> Bundle is frozen and soon will be abandonned. Use `symfony/maker-bundle` v1.2 or higher!
+
 koff/crud-maker-bundle
 ======================
 
